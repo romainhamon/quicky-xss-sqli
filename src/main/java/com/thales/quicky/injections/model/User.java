@@ -22,4 +22,6 @@ public class User {
     @Pattern(regexp=".+@.+\\.[a-z]+", message="Invalid email address!")
     private String email;
 
+    private String password;
+
 }

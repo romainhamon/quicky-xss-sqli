@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <title>Quicky XSS SQLi</title>
+</head>
+<body>
+
+    <form th:action="@{/sqli/blind}" method="GET">
+        <input name="input" type="text">
+        <button type="submit">send</button>
+    </form>
+
+    <div th:each="user : ${usersFound}" th:text="${user.username}"></div>
+
+</body>
+</html>

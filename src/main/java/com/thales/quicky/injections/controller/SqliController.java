@@ -1,6 +1,7 @@
 package com.thales.quicky.injections.controller;
 
 import com.thales.quicky.injections.model.User;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.jdbc.Work;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequestMapping("/sqli")
 public class SqliController {
@@ -27,14 +29,13 @@ public class SqliController {
 
 
     /** exemple utiliser **/
-    // blabla" OR 1=1; --
+    // blabla' OR 1=1; -- commentaire
     @GetMapping("/error")
     public String errorBased(Model model, @RequestParam(required = false) String input) throws Exception{
         Connection connection = dataSource.getConnection();
         Statement statement = connection.createStatement();
 
-        String sql = "SELECT * FROM user where username = \"" + input + "\"";
-        //String sql = "SELECT * FROM user where username = \"blabla\" OR 1=1";
+        String sql = "SELECT * FROM user where username = '" + input + "'";
         ResultSet rs = statement.executeQuery(sql);
 
         List<User> usersFound = new ArrayList<>();
@@ -43,11 +44,48 @@ public class SqliController {
             long id  = rs.getLong("id");
             String username = rs.getString("username");
             String email = rs.getString("email");
-            usersFound.add(new User(id, username, email));
+            usersFound.add(new User(id, username, email, ""));
         }
 
         model.addAttribute("usersFound", usersFound);
         return "sqli";
+    }
+
+    @GetMapping("/blind")
+    public String blindBased(Model model, @RequestParam(required = false) String input) {
+        List<User> usersFound = new ArrayList<>();
+
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet rs = null;
+        try {
+            connection = dataSource.getConnection();
+            statement = connection.createStatement();
+
+            String sql = "SELECT * FROM user where username = '" + input + "'";
+            rs = statement.executeQuery(sql);
+
+            while(rs.next()){
+                long id  = rs.getLong("id");
+                String username = rs.getString("username");
+                String email = rs.getString("email");
+                usersFound.add(new User(id, username, email, ""));
+            }
+
+            rs.close();
+            statement.close();
+            connection.close();
+        } catch (Exception e) {
+            log.warn(e.getMessage());
+        } finally {
+            try {
+                if(statement!=null) statement.close();
+                if(connection!=null) connection.close();
+            } catch (Exception e){}
+        }
+
+        model.addAttribute("usersFound", usersFound);
+        return "sqli-blind";
     }
 
 }
