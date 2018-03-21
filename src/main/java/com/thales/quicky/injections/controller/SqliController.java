@@ -32,19 +32,35 @@ public class SqliController {
     // blabla' OR 1=1; -- commentaire
     @GetMapping("/error")
     public String errorBased(Model model, @RequestParam(required = false) String input) throws Exception{
-        Connection connection = dataSource.getConnection();
-        Statement statement = connection.createStatement();
-
-        String sql = "SELECT * FROM user where username = '" + input + "'";
-        ResultSet rs = statement.executeQuery(sql);
-
         List<User> usersFound = new ArrayList<>();
 
-        while(rs.next()){
-            long id  = rs.getLong("id");
-            String username = rs.getString("username");
-            String email = rs.getString("email");
-            usersFound.add(new User(id, username, email, ""));
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet rs = null;
+        try {
+            connection = dataSource.getConnection();
+            statement = connection.createStatement();
+
+            String sql = "SELECT * FROM user where username = '" + input + "'";
+            rs = statement.executeQuery(sql);
+
+            while(rs.next()){
+                long id  = rs.getLong("id");
+                String username = rs.getString("username");
+                String email = rs.getString("email");
+                usersFound.add(new User(id, username, email, ""));
+            }
+
+            rs.close();
+            statement.close();
+            connection.close();
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            try {
+                if(statement!=null) statement.close();
+                if(connection!=null) connection.close();
+            } catch (Exception e){}
         }
 
         model.addAttribute("usersFound", usersFound);
