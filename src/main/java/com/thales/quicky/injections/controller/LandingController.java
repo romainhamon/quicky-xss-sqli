@@ -1,6 +1,6 @@
 package com.thales.quicky.injections.controller;
 
-import com.thales.quicky.injections.model.MonObjet;
+import com.thales.quicky.injections.model.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +16,7 @@ public class LandingController {
     }
 
     @PostMapping
-    public String createMonObjet(@ModelAttribute @Valid MonObjet monObjet){
+    public String createMonObjet(@ModelAttribute @Valid User monObjet){
         /** do some cool stuff here **/
 
         return "home";

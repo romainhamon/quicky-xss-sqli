@@ -1,89 +1,48 @@
 package com.thales.quicky.injections.controller;
 
+import com.thales.quicky.injections.model.User;
+import org.hibernate.Session;
+import org.hibernate.jdbc.Work;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.persistence.EntityManager;
+import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/sqli")
 public class SqliController {
 
-    // JDBC driver name and database URL
-    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost/quicky";
+    private final DataSource dataSource;
 
-    //  Database credentials
-    static final String USER = "root";
-    static final String PASS = "root";
+    public SqliController(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     @GetMapping("/error")
-    public String errorBased(Model model, @RequestParam(required = false) String input){
+    public String errorBased(Model model, @RequestParam(required = false) String input) throws Exception{
+        Connection connection = dataSource.getConnection();
+        Statement statement = connection.createStatement();
+        //String sql = "SELECT * FROM user where username = \"" + input + "\"";
+        String sql = "SELECT * FROM user where username = \"sdfsd\" OR 1=1";
+        ResultSet rs = statement.executeQuery(sql);
 
-        Connection conn = null;
-        Statement stmt = null;
-        try{
-            //STEP 2: Register JDBC driver
-            Class.forName("com.mysql.jdbc.Driver");
+        List<User> usersFound = new ArrayList<>();
 
-            //STEP 3: Open a connection
-            System.out.println("Connecting to database...");
-            conn = DriverManager.getConnection(DB_URL,USER,PASS);
+        while(rs.next()){
+            long id  = rs.getLong("id");
+            String username = rs.getString("username");
+            String email = rs.getString("email");
+            usersFound.add(new User(id, username, email));
+        }
 
-            //STEP 4: Execute a query
-            System.out.println("Creating statement...");
-            stmt = conn.createStatement();
-            String sql;
-            sql = "SELECT id, first, last, age FROM Employees";
-            ResultSet rs = stmt.executeQuery(sql);
-
-            //STEP 5: Extract data from result set
-            while(rs.next()){
-                //Retrieve by column name
-                int id  = rs.getInt("id");
-                int age = rs.getInt("age");
-                String first = rs.getString("first");
-                String last = rs.getString("last");
-
-                //Display values
-                System.out.print("ID: " + id);
-                System.out.print(", Age: " + age);
-                System.out.print(", First: " + first);
-                System.out.println(", Last: " + last);
-            }
-            //STEP 6: Clean-up environment
-            rs.close();
-            stmt.close();
-            conn.close();
-        }catch(SQLException se){
-            //Handle errors for JDBC
-            model.addAttribute("error", se.getMessage());
-
-            se.printStackTrace();
-        }catch(Exception e){
-            //Handle errors for Class.forName
-            e.printStackTrace();
-            model.addAttribute("error", e.getMessage());
-
-        }finally{
-            //finally block used to close resources
-            try{
-                if(stmt!=null)
-                    stmt.close();
-            }catch(SQLException se2){
-            }// nothing we can do
-            try{
-                if(conn!=null)
-                    conn.close();
-            }catch(SQLException se){
-                se.printStackTrace();
-            }//end finally try
-        }//end try
-
-        model.addAttribute("output", input);
+        model.addAttribute("usersFound", usersFound);
         return "sqli";
     }
 

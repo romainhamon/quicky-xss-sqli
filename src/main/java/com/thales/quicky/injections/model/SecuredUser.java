@@ -1,10 +1,19 @@
 package com.thales.quicky.injections.model;
 
+import lombok.Data;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-public class MonObjet {
+@Data
+@Entity(name = "user")
+public class SecuredUser {
+
+    @Id
+    private Long id;
 
     @NotNull
     @Size(min = 3, max = 10, message = "Max 3, Min 10")

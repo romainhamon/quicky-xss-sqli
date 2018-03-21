@@ -7,7 +7,12 @@
 </head>
 <body>
 
-    <div th:text="${error}"></div>
+    <form th:action="@{/sqli/error}" method="GET">
+        <input name="input" type="text">
+        <button type="submit">send</button>
+    </form>
+
+    <div th:each="user : ${usersFound}" th:text="${user.username}"></div>
 
 </body>
 </html>

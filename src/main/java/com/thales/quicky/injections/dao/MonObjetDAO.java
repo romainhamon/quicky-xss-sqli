@@ -1,7 +1,7 @@
 package com.thales.quicky.injections.dao;
 
-import com.thales.quicky.injections.model.MonObjet;
+import com.thales.quicky.injections.model.User;
 
 public interface MonObjetDAO {
-    MonObjet findByEmail(String email);
+    User findByEmail(String email);
 }
