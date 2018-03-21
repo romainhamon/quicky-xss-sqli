@@ -25,12 +25,16 @@ public class SqliController {
         this.dataSource = dataSource;
     }
 
+
+    /** exemple utiliser **/
+    // blabla" OR 1=1; --
     @GetMapping("/error")
     public String errorBased(Model model, @RequestParam(required = false) String input) throws Exception{
         Connection connection = dataSource.getConnection();
         Statement statement = connection.createStatement();
-        //String sql = "SELECT * FROM user where username = \"" + input + "\"";
-        String sql = "SELECT * FROM user where username = \"sdfsd\" OR 1=1";
+
+        String sql = "SELECT * FROM user where username = \"" + input + "\"";
+        //String sql = "SELECT * FROM user where username = \"blabla\" OR 1=1";
         ResultSet rs = statement.executeQuery(sql);
 
         List<User> usersFound = new ArrayList<>();
