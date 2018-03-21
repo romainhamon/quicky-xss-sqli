@@ -1,0 +1,15 @@
+h1, h2, h3 {
+    margin: 0;
+}
+
+h1 {
+    color: darkblue;
+}
+
+h2 {
+    color: lightslategray;
+}
+
+ul {
+    display: inline-block;
+}
