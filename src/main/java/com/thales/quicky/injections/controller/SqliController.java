@@ -28,10 +28,6 @@ public class SqliController {
     }
 
 
-
-
-    /** exemple utiliser **/
-    // blabla' OR 1=1; -- commentaire
     @GetMapping("/error")
     public String errorBased(Model model, @RequestParam(required = false) String input) throws Exception{
         List<User> usersFound = new ArrayList<>();
