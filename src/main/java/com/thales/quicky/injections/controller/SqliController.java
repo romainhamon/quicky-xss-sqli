@@ -28,6 +28,8 @@ public class SqliController {
     }
 
 
+
+
     /** exemple utiliser **/
     // blabla' OR 1=1; -- commentaire
     @GetMapping("/error")
@@ -102,6 +104,39 @@ public class SqliController {
 
         model.addAttribute("usersFound", usersFound);
         return "sqli-blind";
+    }
+
+    @GetMapping("/time")
+    public String timeBased(Model model, @RequestParam(required = false) String input) {
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet rs = null;
+        try {
+            connection = dataSource.getConnection();
+            statement = connection.createStatement();
+
+            String sql = "SELECT * FROM user where username = '" + input + "'";
+            rs = statement.executeQuery(sql);
+
+            while(rs.next()){
+                long id  = rs.getLong("id");
+                String username = rs.getString("username");
+                String email = rs.getString("email");
+            }
+
+            rs.close();
+            statement.close();
+            connection.close();
+        } catch (Exception e) {
+            log.warn(e.getMessage());
+        } finally {
+            try {
+                if(statement!=null) statement.close();
+                if(connection!=null) connection.close();
+            } catch (Exception e){}
+        }
+
+        return "sqli-blind-time";
     }
 
 }

@@ -20,8 +20,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .permitAll();
 
         http.csrf().disable();
-        http.headers().xssProtection().xssProtectionEnabled(false);
         //http.headers().contentSecurityPolicy("script-src 'self'");
+        http.headers().xssProtection().xssProtectionEnabled(false);
         http.headers().frameOptions().disable();
     }
 

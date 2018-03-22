@@ -7,13 +7,10 @@
 </head>
 <body>
 
-    <form th:action="@{/xss/reflected}" method="GET">
+    <form th:action="@{/sqli/time}" method="GET">
         <input name="input" type="text">
         <button type="submit">send</button>
     </form>
-    <div th:utext="${output}"></div>
-
-
 
 </body>
 </html>
